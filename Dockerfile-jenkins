@@ -2,10 +2,19 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-RUN jenkins-plugin-cli --plugins \
+'RUN jenkins-plugin-cli --plugins \
   blueocean \
   build-timestamp \
   timestamper \
+  pollscm'
+
+RUN jenkins-plugin-cli --plugins \
+  workflow-aggregator \
+  git \
+  github \
+  credentials-binding \
+  timestamper \
+  build-timestamp \
   pollscm
 
 COPY jenkins/1-configureJenkins.groovy /usr/share/jenkins/ref/init.groovy.d/
