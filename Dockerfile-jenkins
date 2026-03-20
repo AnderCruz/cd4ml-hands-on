@@ -2,12 +2,6 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-'RUN jenkins-plugin-cli --plugins \
-  blueocean \
-  build-timestamp \
-  timestamper \
-  pollscm'
-
 RUN jenkins-plugin-cli --plugins \
   workflow-aggregator \
   git \
