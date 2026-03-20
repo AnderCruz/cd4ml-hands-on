@@ -2,6 +2,15 @@ FROM jenkins/jenkins:lts
 
 USER root
 
+# 🔥 Instala Python + pip + ferramentas básicas
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Plugins Jenkins
 RUN jenkins-plugin-cli --plugins \
   workflow-aggregator \
   git \
@@ -11,15 +20,19 @@ RUN jenkins-plugin-cli --plugins \
   build-timestamp \
   pollscm
 
+# Configuração inicial
 COPY jenkins/1-configureJenkins.groovy /usr/share/jenkins/ref/init.groovy.d/
 COPY jenkins/2-addAccessKeys.groovy /usr/share/jenkins/ref/init.groovy.d/
 
+# Jenkins settings
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 ENV JENKINS_URL="http://jenkins:8080"
 
+# Fluentd
 ENV FLUENTD_HOST=fluentd
 ENV FLUENTD_PORT=24224
 
+# ⚠️ NÃO é ideal usar ENV assim para secrets (explico abaixo)
 ENV ACCESS_KEY=${ACCESS_KEY}
 ENV SECRET_KEY=${SECRET_KEY}
 
