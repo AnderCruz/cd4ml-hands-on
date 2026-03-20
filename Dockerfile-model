@@ -1,20 +1,27 @@
-FROM python:3.9-slim-buster
+FROM python:3.10-slim
 
 USER root
-ENV FLUENTD_HOST "fluentd"
-ENV FLUENTD_PORT "24224"
-ENV FLASK_APP "cd4ml/app.py"
-ENV FLASK_ENV "production"
-ENV MLFLOW_TRACKING_URL "http://mlflow:5000"
 
-RUN mkdir -p /app/cd4ml/
-WORKDIR /app/cd4ml/
+ENV FLUENTD_HOST=fluentd
+ENV FLUENTD_PORT=24224
 
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+ENV FLASK_APP=cd4ml.app
+ENV FLASK_ENV=production
 
-COPY cd4ml .
+ENV MLFLOW_TRACKING_URL=http://mlflow:5000
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    build-essential \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY cd4ml ./cd4ml
 
 EXPOSE 5005
-WORKDIR /app
-CMD flask run --host=0.0.0.0 --port 5005
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5005"]
