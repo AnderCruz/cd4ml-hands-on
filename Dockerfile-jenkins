@@ -2,6 +2,16 @@ FROM jenkins/jenkins:lts
 
 USER root
 
+# 🔥 Instala dependências + Docker CLI
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    docker.io \
+    && rm -rf /var/lib/apt/lists/*
+
+# 🔥 adiciona Jenkins ao grupo docker (IMPORTANTE)
+RUN groupadd -f docker && usermod -aG docker jenkins
+
 # Plugins Jenkins
 RUN jenkins-plugin-cli --plugins \
   workflow-aggregator \
@@ -10,7 +20,8 @@ RUN jenkins-plugin-cli --plugins \
   credentials-binding \
   timestamper \
   build-timestamp \
-  pollscm
+  pollscm \
+  docker-workflow
 
 # Configuração inicial
 COPY jenkins/1-configureJenkins.groovy /usr/share/jenkins/ref/init.groovy.d/
@@ -24,7 +35,7 @@ ENV JENKINS_URL="http://jenkins:8080"
 ENV FLUENTD_HOST=fluentd
 ENV FLUENTD_PORT=24224
 
-# ⚠️ NÃO é ideal usar ENV assim para secrets (explico abaixo)
+# ❌ NÃO recomendado (deixa isso fora depois)
 ENV ACCESS_KEY=${ACCESS_KEY}
 ENV SECRET_KEY=${SECRET_KEY}
 
