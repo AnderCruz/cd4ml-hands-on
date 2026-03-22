@@ -1,5 +1,5 @@
 import joblib
-from sklearn.preprocessing import OneHotEncoder
+from wickedhot import OneHotEncoder
 from cd4ml.train import get_trained_model
 from cd4ml.model_utils import get_target_id_features_lists
 import logging
