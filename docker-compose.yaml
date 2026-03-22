@@ -14,24 +14,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-jenkins
-
     ports:
       - "10000:8080"
-
     environment:
       ACCESS_KEY: ${ACCESS_KEY}
       SECRET_KEY: ${SECRET_KEY}
 
     privileged: true
-    user: root   # 🔥 IMPORTANTE (resolve permission denied)
 
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock   # 🔥 ESSENCIAL
 
     networks:
       - jenkins_nw
-
 
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
