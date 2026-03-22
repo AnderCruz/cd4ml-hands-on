@@ -26,7 +26,7 @@ class MLModel:
 
     def load_encoder_from_package(self):
         self.logger.info('loading encoder from packaging')
-        self.encoder = OneHotEncoder([], [])
+        self.encoder = OneHotEncoder(categories=[], handle_unknown='ignore')
         self.encoder.load_from_packaged_data(self.packaged_encoder)
 
     def predict_encoded_rows(self, encoded_row_list):
